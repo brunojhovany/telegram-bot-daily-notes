@@ -1,0 +1,9 @@
+venv/**
+__pycache__/**
+
+done
+pkiller
+app.py.threads
+.env
+
+notes

@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: telegram-bot-daily-notes-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-path
+  hostPath:
+    path: /home/bruno/daily-notes
+---
+# pvc
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: telegram-bot-daily-notes-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: telegram-bot-daily-notes
+spec:
+  schedule: "35 14 * * *"
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: telegram-bot-daily-notes
+            image: jhovanylinkin/telegram-bot-daily-notes:latest
+            imagePullPolicy: Always
+            envFrom:
+            - configMapRef:
+                name: telegram-bot-daily-notes-configmap
+            volumeMounts:
+            - name: telegram-bot-daily-notes-pv
+              mountPath: /notes
+          restartPolicy: Never
+          volumes:
+          - name: telegram-bot-daily-notes-pv
+            persistentVolumeClaim:
+              claimName: telegram-bot-daily-notes-pvc

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telegram-bot-daily-notes-configmap
+data:
+  API_TOKEN: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  CHAT_ID: XXXXXXXXXXX
+  LOG_FILENAME: daily_notes.txt
